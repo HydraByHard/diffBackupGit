@@ -1,0 +1,41 @@
+CREATE PROCEDURE CopyFULL  
+@name varchar(255) 
+AS   
+BACKUP DATABASE @name TO DISK = 'C:\Program Files\Microsoft SQL Server\MSSQL15.SQLEXPRESS\MSSQL\Backup\MyDB_Full.bak'
+-----------------------
+CREATE PROCEDURE CopyDIF
+@name varchar(255), @path varchar(255)
+AS
+BACKUP DATABASE @name TO DISK = @path WITH DIFFERENTIAL;
+-----------------------
+CREATE PROCEDURE CopyLOG
+    @name varchar(255) 
+AS   
+BACKUP LOG @name TO DISK = 'C:\Program Files\Microsoft SQL Server\MSSQL15.SQLEXPRESS\MSSQL\Backup\MyDB_log.trn'
+-----------------------
+create PROCEDURE RollbackP
+@name varchar(255), @path varchar(255)
+AS
+RESTORE DATABASE @name
+FROM DISK = 'C:\Program Files\Microsoft SQL Server\MSSQL15.SQLEXPRESS\MSSQL\Backup\MyDB_Full.bak'  
+WITH REPLACE, NORECOVERY
+
+RESTORE DATABASE @name
+FROM DISK = @path
+WITH NORECOVERY
+
+RESTORE DATABASE @name
+----------------------
+create PROCEDURE Recover
+    @name varchar(255), @path varchar(255)
+AS   
+RESTORE DATABASE @name  
+   FROM DISK = 'C:\Program Files\Microsoft SQL Server\MSSQL15.SQLEXPRESS\MSSQL\Backup\MyDB_Full.bak'  
+   WITH NORECOVERY     
+RESTORE DATABASE @name 
+   FROM DISK = @path
+   WITH FILE = 1,  
+   NORECOVERY    
+RESTORE LOG @name 
+   FROM DISK = 'C:\Program Files\Microsoft SQL Server\MSSQL15.SQLEXPRESS\MSSQL\Backup\MyDB_log.trn'
+   WITH RECOVERY
